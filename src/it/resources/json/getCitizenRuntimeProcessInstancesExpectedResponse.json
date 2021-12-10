@@ -1,0 +1,44 @@
+[
+  {
+    "processInstanceId": "citizenActiveProcess",
+    "superProcessInstanceId": null,
+    "processDefinitionId": "processDefinition",
+    "processDefinitionKey": null,
+    "processDefinitionName": null,
+    "businessKey": null,
+    "startTime": "2022-01-11T12:35:00.000Z",
+    "startUserId": "testuser",
+    "status": {
+      "code": "ACTIVE",
+      "title": "Прийнято в обробку"
+    }
+  },
+  {
+    "processInstanceId": "citizenPendingProcess",
+    "superProcessInstanceId": null,
+    "processDefinitionId": "processDefinition",
+    "processDefinitionKey": null,
+    "processDefinitionName": null,
+    "businessKey": null,
+    "startTime": "2022-01-11T12:36:00.000Z",
+    "startUserId": "testuser",
+    "status": {
+      "code": "PENDING",
+      "title": "Чернетка"
+    }
+  },
+  {
+    "processInstanceId": "citizenSuspendedProcess",
+    "superProcessInstanceId": null,
+    "processDefinitionId": "processDefinition",
+    "processDefinitionKey": null,
+    "processDefinitionName": null,
+    "businessKey": null,
+    "startTime": "2022-01-11T12:37:00.000Z",
+    "startUserId": "testuser",
+    "status": {
+      "code": "SUSPENDED",
+      "title": "Послуга тимчасово недоступна"
+    }
+  }
+]

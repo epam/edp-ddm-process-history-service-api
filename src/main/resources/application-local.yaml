@@ -1,0 +1,41 @@
+spring:
+  zipkin:
+    enabled: false
+
+server:
+  port: 7071
+
+data-platform:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/registry
+    username: application_role
+    password: qwerty
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+# Not use for real token validation, just example
+keycloak:
+  url: https://platform-keycloak.apps.cicd2.mdtu-ddm.projects.epam.com
+  realms:
+    - realm
+
+audit:
+  kafka:
+    bootstrap: localhost:9092
+    topic: audit-events
+    schema-registry-url: http://localhost:8081
+    ssl:
+      enabled: false
+
+logging:
+  level:
+    root: INFO
+    org.zalando.logbook: TRACE
+  pattern:
+    #   Logging patterns inherited from Spring Boot default logging system configuration
+    #   add tracing
+    console: '%d{${LOG_DATEFORMAT_PATTERN}} [trace:%X{traceId}/%X{spanId}/%X{x-request-id}] ${LOG_LEVEL_PATTERN} %pid --- [%15.15t] %-40.40c{1.} : %m%n${LOG_EXCEPTION_CONVERSION_WORD}'
