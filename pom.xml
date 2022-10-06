@@ -22,10 +22,10 @@
     <model.version>1.6.0.1</model.version>
     <model.core.version>1.6.0.60</model.core.version>
     <ddm.starter.database.version>1.6.0.1</ddm.starter.database.version>
-    <ddm.starter.logger.version>1.6.0.1</ddm.starter.logger.version>
-    <ddm.starter.actuator.version>1.6.0.1</ddm.starter.actuator.version>
+    <ddm.starter.logger2.version>1.6.0.5</ddm.starter.logger2.version>
+    <ddm.starter.actuator.version>1.6.0.3</ddm.starter.actuator.version>
     <ddm.starter.security.version>1.6.0.1</ddm.starter.security.version>
-    <ddm.starter.localization.version>1.6.0.1</ddm.starter.localization.version>
+    <ddm.starter.localization.version>1.6.0.3</ddm.starter.localization.version>
     <ddm.starter.swagger.version>1.6.0.1</ddm.starter.swagger.version>
     <ddm.starter.audit.version>1.6.0.1</ddm.starter.audit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -34,11 +34,12 @@
     <spring.boot.version>2.6.1</spring.boot.version>
     <spring.cloud.version>2021.0.0</spring.cloud.version>
     <log4j.version>2.17.0</log4j.version>
-    <jackson.core.version>2.12.0</jackson.core.version>
+    <jackson.core.version>2.13.4</jackson.core.version>
     <mapstruct.version>1.4.2.Final</mapstruct.version>
     <lombok.version>1.18.18</lombok.version>
     <zonky.embedded.postgres.version>1.3.1</zonky.embedded.postgres.version>
     <embedded.database.spring-test.version>2.1.1</embedded.database.spring-test.version>
+    <snakeyaml.version>1.33</snakeyaml.version>
 
     <sonar.coverage.exclusions>
       **/config/**/*,
@@ -78,6 +79,26 @@
         <artifactId>log4j-core</artifactId>
         <version>${log4j.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${snakeyaml.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${jackson.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>${jackson.core.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -105,7 +126,7 @@
     <dependency>
       <groupId>com.epam.digital.data.platform</groupId>
       <artifactId>ddm-starter-logger2</artifactId>
-      <version>${ddm.starter.logger.version}</version>
+      <version>${ddm.starter.logger2.version}</version>
     </dependency>
     <dependency>
       <groupId>com.epam.digital.data.platform</groupId>
@@ -181,17 +202,14 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>${jackson.core.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson.core.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>${jackson.core.version}</version>
     </dependency>
 
     <dependency>
