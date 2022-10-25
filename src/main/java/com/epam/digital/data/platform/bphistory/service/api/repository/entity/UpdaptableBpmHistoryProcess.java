@@ -16,32 +16,21 @@
 
 package com.epam.digital.data.platform.bphistory.service.api.repository.entity;
 
-import java.time.LocalDateTime;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+
 
 @Data
 @Entity
-@Table(name = BpmHistoryProcess.TABLE_NAME)
-@Immutable
-@Subselect("SELECT t.*, " +
-        "CASE " +
-        " WHEN t.state = 'EXTERNALLY_TERMINATED' THEN '01' " +
-        " WHEN t.state = 'COMPLETED' THEN '02' " +
-        " WHEN t.state = 'PENDING' THEN '03' " +
-        " WHEN t.state = 'SUSPENDED' THEN '04' " +
-        " WHEN t.state = 'ACTIVE' THEN '05' " +
-        " ELSE '99' " +
-        "END AS status_title  " +
-        " FROM " + BpmHistoryProcess.TABLE_NAME + " t"
-)
-public class BpmHistoryProcess {
+@Table(name = UpdaptableBpmHistoryProcess.TABLE_NAME)
+public class UpdaptableBpmHistoryProcess {
 
   public static final String TABLE_NAME = "bpm_history_process";
 
@@ -61,5 +50,4 @@ public class BpmHistoryProcess {
   private String state;
   private String excerptId;
   private String completionResult;
-  private String statusTitle;
 }
