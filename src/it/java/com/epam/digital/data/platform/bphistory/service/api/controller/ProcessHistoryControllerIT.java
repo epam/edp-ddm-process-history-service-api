@@ -45,6 +45,36 @@ class ProcessHistoryControllerIT extends BaseIT {
   }
 
   @Test
+  void getOrderedHistoryProcessInstances() throws Exception {
+
+    createBpmHistoryProcessAndSaveToDatabase("id2", "procDef",
+            LocalDateTime.of(2022, 1, 10, 11, 42), "COMPLETED", "testuser", null);
+
+    createBpmHistoryProcessAndSaveToDatabase("id4", "procDef",
+            LocalDateTime.of(2022, 1, 10, 11, 42), "SUSPENDED", "testuser", null);
+
+    createBpmHistoryProcessAndSaveToDatabase("id1", "procDef",
+            LocalDateTime.of(2022, 1, 10, 11, 42), "EXTERNALLY_TERMINATED", "testuser", null);
+
+    createBpmHistoryProcessAndSaveToDatabase("id5", "procDef",
+            LocalDateTime.of(2022, 1, 10, 11, 42), "ACTIVE", "testuser", null);
+
+    createBpmHistoryProcessAndSaveToDatabase("id3", "procDef",
+            LocalDateTime.of(2022, 1, 10, 11, 42), "PENDING", "testuser", null);
+
+
+
+    var expectedJson = TestUtils.readClassPathResource(
+            "/json/getOrderedHistoryProcessInstancesExpectedResponse.json");
+
+    mockMvc.perform(get("/api/history/process-instances")
+                    .header(X_ACCESS_TOKEN.getHeaderName(), OFFICER_TOKEN)
+                    .requestAttr("sort", "asc(statusTitle)"))
+            .andExpect(status().is2xxSuccessful())
+            .andExpect(content().json(expectedJson));
+  }
+
+  @Test
   void getTasks() throws Exception {
 
     createBpmHistoryProcessAndSaveToDatabase("processInstanceId", "procDef",

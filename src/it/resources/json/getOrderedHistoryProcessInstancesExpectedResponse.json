@@ -1,0 +1,34 @@
+[
+  {
+    "processInstanceId": "id1",
+    "superProcessInstanceId": null,
+    "processDefinitionId": "procDef",
+    "processDefinitionKey": null,
+    "processDefinitionName": null,
+    "businessKey": null,
+    "startTime": "2022-01-10T11:42:00.000Z",
+    "endTime": null,
+    "startUserId": "testuser",
+    "excerptId": null,
+    "status": {
+      "code": "EXTERNALLY_TERMINATED",
+      "title": "Відмінено адміністратором"
+    }
+  },
+  {
+    "processInstanceId": "id2",
+    "superProcessInstanceId": null,
+    "processDefinitionId": "procDef",
+    "processDefinitionKey": null,
+    "processDefinitionName": null,
+    "businessKey": null,
+    "startTime": "2022-01-10T11:42:00.000Z",
+    "endTime": null,
+    "startUserId": "testuser",
+    "excerptId": null,
+    "status": {
+      "code": "COMPLETED",
+      "title": "Надання послуги завершено"
+    }
+  }
+]

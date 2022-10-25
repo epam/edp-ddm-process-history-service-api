@@ -18,8 +18,9 @@ package com.epam.digital.data.platform.bphistory.service.api;
 
 import com.epam.digital.data.platform.bphistory.service.api.repository.ProcessRepository;
 import com.epam.digital.data.platform.bphistory.service.api.repository.TaskRepository;
-import com.epam.digital.data.platform.bphistory.service.api.repository.entity.BpmHistoryProcess;
+import com.epam.digital.data.platform.bphistory.service.api.repository.UpdaptableProcessRepository;
 import com.epam.digital.data.platform.bphistory.service.api.repository.entity.BpmHistoryTask;
+import com.epam.digital.data.platform.bphistory.service.api.repository.entity.UpdaptableBpmHistoryProcess;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterEach;
@@ -40,26 +41,29 @@ public abstract class BaseIT {
   protected MockMvc mockMvc;
   @Autowired
   protected ProcessRepository processRepository;
+
+  @Autowired
+  protected UpdaptableProcessRepository updaptableProcessRepository;
   @Autowired
   protected TaskRepository taskRepository;
 
   @AfterEach
   void cleanUp() {
-    processRepository.deleteAll();
+    updaptableProcessRepository.deleteAll();
     taskRepository.deleteAll();
   }
 
-  protected BpmHistoryProcess createBpmHistoryProcessAndSaveToDatabase(String id,
-      String processDefinitionId, LocalDateTime startTime, String state, String startUserId,
-      String businessKey) {
-    var processInstance = new BpmHistoryProcess();
+  protected UpdaptableBpmHistoryProcess createBpmHistoryProcessAndSaveToDatabase(String id,
+                                                                                 String processDefinitionId, LocalDateTime startTime, String state, String startUserId,
+                                                                                 String businessKey) {
+    var processInstance = new UpdaptableBpmHistoryProcess();
     processInstance.setProcessInstanceId(id);
     processInstance.setProcessDefinitionId(processDefinitionId);
     processInstance.setStartTime(startTime);
     processInstance.setState(state);
     processInstance.setStartUserId(startUserId);
     processInstance.setBusinessKey(businessKey);
-    return processRepository.save(processInstance);
+    return updaptableProcessRepository.save(processInstance);
   }
 
   protected BpmHistoryTask createBpmHistoryTaskAndSaveToDatabase(String id,

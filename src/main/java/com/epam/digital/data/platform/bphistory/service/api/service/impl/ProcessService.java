@@ -16,27 +16,22 @@
 
 package com.epam.digital.data.platform.bphistory.service.api.service.impl;
 
-import com.epam.digital.data.platform.bphistory.service.api.mapper.ProcessMapper;
+import com.epam.digital.data.platform.bphistory.service.api.mapper.ProcessTaskMapper;
 import com.epam.digital.data.platform.bphistory.service.api.model.CountResponse;
 import com.epam.digital.data.platform.bphistory.service.api.model.ProcessInstanceStatus;
 import com.epam.digital.data.platform.bphistory.service.api.model.ProcessResponse;
-import com.epam.digital.data.platform.bphistory.service.api.repository.ProcessRepository;
-import com.epam.digital.data.platform.bphistory.service.api.repository.TaskRepository;
-import com.epam.digital.data.platform.bphistory.service.api.repository.entity.BpmHistoryProcess;
-import com.epam.digital.data.platform.bphistory.service.api.repository.entity.BpmHistoryTask;
+import com.epam.digital.data.platform.bphistory.service.api.repository.ProcessTaskRepository;
 import com.epam.digital.data.platform.bphistory.service.api.service.GenericService;
 import com.epam.digital.data.platform.bphistory.service.api.service.JwtInfoProvider;
 import com.epam.digital.data.platform.model.core.kafka.SecurityContext;
 import com.epam.digital.data.platform.starter.security.SystemRole;
 import com.epam.digital.data.platform.starter.security.dto.JwtClaimsDto;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -45,15 +40,13 @@ public class ProcessService extends GenericService<ProcessResponse> {
   private static final Set<String> UNFINISHED_PROCESS_STATES = Set.of(
       ProcessInstanceStatus.ACTIVE.name(), ProcessInstanceStatus.SUSPENDED.name());
 
-  private final ProcessRepository repository;
-  private final TaskRepository taskRepository;
-  private final ProcessMapper mapper;
+  private final ProcessTaskRepository repository;
+  private final ProcessTaskMapper mapper;
 
-  public ProcessService(ProcessRepository repository, TaskRepository taskRepository,
-      JwtInfoProvider jwtInfoProvider, ProcessMapper mapper) {
+  public ProcessService(ProcessTaskRepository repository,
+      JwtInfoProvider jwtInfoProvider, ProcessTaskMapper mapper) {
     super(jwtInfoProvider);
     this.repository = repository;
-    this.taskRepository = taskRepository;
     this.mapper = mapper;
   }
 
@@ -64,14 +57,6 @@ public class ProcessService extends GenericService<ProcessResponse> {
     var processInstances = repository.findAllByStartUserIdAndStateInAndSuperProcessInstanceIdIsNull(
         userKeycloakId, UNFINISHED_PROCESS_STATES, request);
     log.trace("Found {} process instances", processInstances.size());
-
-    var activeProcessInstances = getActiveProcessInstanceMap(processInstances);
-
-    var pendingTaskList = getPendingTaskList(userKeycloakId, activeProcessInstances.keySet());
-    log.trace("Found pending tasks for {} process instances", pendingTaskList.size());
-
-    definePendingStatusForProcessInstancesWithPendingTasks(activeProcessInstances, pendingTaskList);
-    log.trace("PENDING status was set for {} process instances", pendingTaskList.size());
 
     var userSystemRole = getUserSystemRole(userClaims);
 
@@ -86,28 +71,6 @@ public class ProcessService extends GenericService<ProcessResponse> {
     var count = repository.countByStartUserIdAndStateIn(userKeycloakId, UNFINISHED_PROCESS_STATES);
     log.info("Counted {} active process instances", count);
     return CountResponse.builder().count(count).build();
-  }
-
-  private List<BpmHistoryTask> getPendingTaskList(String userKeycloakId,
-      Set<String> activeProcessInstanceIds) {
-    return taskRepository.findAllByAssigneeAndRootProcessInstanceIdInAndEndTimeIsNull(
-        userKeycloakId, activeProcessInstanceIds);
-  }
-
-  private Map<String, BpmHistoryProcess> getActiveProcessInstanceMap(
-      List<BpmHistoryProcess> result) {
-    return result.stream()
-        .filter(bpmHistoryProcess -> ProcessInstanceStatus.ACTIVE.name()
-            .equals(bpmHistoryProcess.getState()))
-        .collect(Collectors.toMap(BpmHistoryProcess::getProcessInstanceId, Function.identity()));
-  }
-
-  private void definePendingStatusForProcessInstancesWithPendingTasks(
-      Map<String, BpmHistoryProcess> processInstances,
-      List<BpmHistoryTask> pendingTaskList) {
-    pendingTaskList.stream()
-        .map(bpmHistoryTask -> processInstances.get(bpmHistoryTask.getRootProcessInstanceId()))
-        .forEach(process -> process.setState(ProcessInstanceStatus.PENDING.name()));
   }
 
   private SystemRole getUserSystemRole(JwtClaimsDto userClaims) {
