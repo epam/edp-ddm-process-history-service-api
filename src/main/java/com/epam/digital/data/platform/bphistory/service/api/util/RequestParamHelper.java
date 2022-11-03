@@ -20,7 +20,9 @@ import com.epam.digital.data.platform.bphistory.service.api.exception.SortParamW
 import com.epam.digital.data.platform.bphistory.service.api.model.LimitOffsetPageRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,11 +30,28 @@ public class RequestParamHelper {
 
   private static final String ASC_PREFIX = "asc(";
   private static final String DESC_PREFIX = "desc(";
+  private static final String STATUS_TITLE = "statusTitle";
+  private static final String START_TIME = "startTime";
 
   public Pageable getPageRequest(int limit, int offset, String sort) {
     checkValidity(sort);
 
     return new LimitOffsetPageRequest(offset, limit, getSortDirection(sort), getSortField(sort));
+  }
+
+  public Pageable getPageRequestSortedByStatusAndStartTime(int limit, int offset, String sort) {
+    checkValidity(sort);
+
+    String sortField = getSortField(sort);
+    Direction direction = getSortDirection(sort);
+    if(sortField.equals(STATUS_TITLE)) {
+      return new LimitOffsetPageRequest(offset, limit, 
+          Sort.by(
+              new Order(direction, sortField), 
+              new Order(Direction.DESC, START_TIME)
+          ));
+    }
+    return new LimitOffsetPageRequest(offset, limit, direction, sortField);
   }
 
   private void checkValidity(String sort) {

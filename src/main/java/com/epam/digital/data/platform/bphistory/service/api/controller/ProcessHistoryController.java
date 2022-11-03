@@ -68,7 +68,7 @@ public class ProcessHistoryController {
       @RequestParam(defaultValue = "0") int offset,
       @RequestParam(defaultValue = "desc(endTime)") String sort,
       @HttpSecurityContext SecurityContext securityContext) {
-    var page = requestParamHelper.getPageRequest(limit, offset, sort);
+    var page = requestParamHelper.getPageRequestSortedByStatusAndStartTime(limit, offset, sort);
 
     return ResponseEntity.ok(historyProcessService.getItems(page, securityContext));
   }

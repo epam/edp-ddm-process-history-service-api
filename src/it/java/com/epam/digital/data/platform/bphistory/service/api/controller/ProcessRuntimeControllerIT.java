@@ -19,8 +19,10 @@ package com.epam.digital.data.platform.bphistory.service.api.controller;
 import static com.epam.digital.data.platform.bphistory.service.api.TestUtils.CITIZEN_TOKEN;
 import static com.epam.digital.data.platform.bphistory.service.api.TestUtils.OFFICER_TOKEN;
 import static com.epam.digital.data.platform.bphistory.service.api.util.Header.X_ACCESS_TOKEN;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.epam.digital.data.platform.bphistory.service.api.BaseIT;
@@ -105,7 +107,6 @@ class ProcessRuntimeControllerIT extends BaseIT {
     createBpmHistoryProcessAndSaveToDatabase("citizenSuspendedProcess", "processDefinition",
         LocalDateTime.of(2022, 1, 11, 12, 37), "SUSPENDED", "testuser", null);
 
-
     var expectedJson = TestUtils.readClassPathResource(
         "/json/countOfficerActiveProcessInstances.json");
 
@@ -113,5 +114,38 @@ class ProcessRuntimeControllerIT extends BaseIT {
             .header(X_ACCESS_TOKEN.getHeaderName(), OFFICER_TOKEN))
         .andExpect(status().is2xxSuccessful())
         .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void shouldReturnSortedByStatusAndStartTime() throws Exception {
+    createBpmHistoryProcessAndSaveToDatabase("Process1", "processDefinition",
+        LocalDateTime.of(2022, 1, 11, 12, 37), "SUSPENDED", "testuser", null);
+    createBpmHistoryProcessAndSaveToDatabase("Process4", "processDefinition",
+        LocalDateTime.of(2022, 1, 11, 12, 38), "ACTIVE", "testuser", null);
+    createBpmHistoryProcessAndSaveToDatabase("Process2", "processDefinition",
+        LocalDateTime.of(2022, 1, 11, 12, 16), "SUSPENDED", "testuser", null);
+    createBpmHistoryProcessAndSaveToDatabase("Process5", "processDefinition",
+        LocalDateTime.of(2022, 1, 11, 12, 15), "ACTIVE", "testuser", null);
+    createBpmHistoryProcessAndSaveToDatabase("Process3", "processDefinition",
+        LocalDateTime.of(2022, 1, 11, 12, 44), "SUSPENDED", "testuser", null);
+    createBpmHistoryProcessAndSaveToDatabase("Process6", "processDefinition",
+        LocalDateTime.of(2022, 1, 11, 12, 46), "ACTIVE", "testuser", null);
+
+    mockMvc.perform(get("/api/runtime/process-instances")
+            .header(X_ACCESS_TOKEN.getHeaderName(), OFFICER_TOKEN)
+            .queryParam("sort", "asc(statusTitle)"))
+        .andExpect(status().is2xxSuccessful())
+        .andExpect(jsonPath("$[0].startTime", is("2022-01-11T12:44:00.000Z")))
+        .andExpect(jsonPath("$[0].status.code", is("SUSPENDED")))
+        .andExpect(jsonPath("$[1].startTime", is("2022-01-11T12:37:00.000Z")))
+        .andExpect(jsonPath("$[1].status.code", is("SUSPENDED")))
+        .andExpect(jsonPath("$[2].startTime", is("2022-01-11T12:16:00.000Z")))
+        .andExpect(jsonPath("$[2].status.code", is("SUSPENDED")))
+        .andExpect(jsonPath("$[3].startTime", is("2022-01-11T12:46:00.000Z")))
+        .andExpect(jsonPath("$[3].status.code", is("ACTIVE")))
+        .andExpect(jsonPath("$[4].startTime", is("2022-01-11T12:38:00.000Z")))
+        .andExpect(jsonPath("$[4].status.code", is("ACTIVE")))
+        .andExpect(jsonPath("$[5].startTime", is("2022-01-11T12:15:00.000Z")))
+        .andExpect(jsonPath("$[5].status.code", is("ACTIVE")));
   }
 }
