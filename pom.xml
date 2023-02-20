@@ -39,6 +39,7 @@
     <mapstruct.version>1.4.2.Final</mapstruct.version>
     <lombok.version>1.18.18</lombok.version>
     <zonky.embedded.postgres.version>1.3.1</zonky.embedded.postgres.version>
+    <postgresql.version>42.3.3</postgresql.version>
     <embedded.database.spring-test.version>2.1.1</embedded.database.spring-test.version>
     <snakeyaml.version>1.33</snakeyaml.version>
 
