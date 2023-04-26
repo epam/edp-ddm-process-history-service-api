@@ -24,7 +24,7 @@
     <ddm.starter.database.version>1.6.0.1</ddm.starter.database.version>
     <ddm.starter.logger2.version>1.6.0.5</ddm.starter.logger2.version>
     <ddm.starter.actuator.version>1.6.0.3</ddm.starter.actuator.version>
-    <ddm.starter.security.version>1.6.0.12</ddm.starter.security.version>
+    <ddm.starter.security.version>1.6.0.13</ddm.starter.security.version>
     <ddm.starter.localization.version>1.6.0.3</ddm.starter.localization.version>
     <ddm.starter.swagger.version>1.6.0.1</ddm.starter.swagger.version>
     <ddm.starter.audit.version>1.6.0.1</ddm.starter.audit.version>
