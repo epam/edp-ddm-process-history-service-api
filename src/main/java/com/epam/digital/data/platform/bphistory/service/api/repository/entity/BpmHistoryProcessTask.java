@@ -31,23 +31,32 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = BpmHistoryProcessTask.TABLE_NAME)
 @Immutable
-@Subselect("SELECT DISTINCT p.*, " +
-        "CASE " +
-        " WHEN p.state = 'ACTIVE' AND t.root_process_instance_id IS NOT NULL THEN 'PENDING'" +
-        " ELSE p.state " +
-        "END AS process_state,  " +
-        "CASE " +
-        " WHEN p.state = 'EXTERNALLY_TERMINATED' THEN '01' " +
-        " WHEN p.state = 'COMPLETED' THEN '02' " +
-        " WHEN p.state = 'PENDING' THEN '03' " +
-        " WHEN p.state = 'ACTIVE' AND t.root_process_instance_id IS NOT NULL THEN '03' " +
-        " WHEN p.state = 'SUSPENDED' THEN '04' " +
-        " WHEN p.state = 'ACTIVE' AND t.root_process_instance_id IS NULL THEN '05' " +
-        " ELSE '99' " +
-        "END AS status_title  " +
-        "FROM bpm_history_process p " +
-        "LEFT OUTER JOIN (SELECT * FROM bpm_history_task WHERE end_time IS NULL) t " +
-        "ON p.process_instance_id = t.root_process_instance_id AND t.assignee = p.start_user_id ")
+@Subselect("SELECT P.*, " +
+          "CASE " +
+              "WHEN P.STATE = 'ACTIVE' " +
+                    "AND TASK_EXISTS THEN 'PENDING' " +
+              "ELSE P.STATE " +
+          "END AS PROCESS_STATE, " +
+          "CASE " +
+              "WHEN P.STATE = 'EXTERNALLY_TERMINATED' THEN '01' " +
+              "WHEN P.STATE = 'COMPLETED' THEN '02' " +
+              "WHEN P.STATE = 'PENDING' THEN '03' " +
+              "WHEN P.STATE = 'ACTIVE' " +
+                      "AND TASK_EXISTS THEN '03' " +
+              "WHEN P.STATE = 'SUSPENDED' THEN '04' " +
+              "WHEN P.STATE = 'ACTIVE' " +
+                    "AND NOT TASK_EXISTS THEN '05' " +
+              "ELSE '99' " +
+          "END AS STATUS_TITLE " +
+          "FROM " +
+             "(SELECT HP.*, " +
+                    "EXISTS " +
+                "(SELECT 1 " +
+                "FROM BPM_HISTORY_TASK T " +
+                "WHERE T.END_TIME IS NULL " +
+                  "AND HP.PROCESS_INSTANCE_ID = T.ROOT_PROCESS_INSTANCE_ID " +
+                  "AND T.ASSIGNEE = HP.START_USER_ID) TASK_EXISTS " +
+             "FROM BPM_HISTORY_PROCESS HP) P")
 public class BpmHistoryProcessTask {
 
   public static final String TABLE_NAME = "bpm_history_process";
