@@ -13,7 +13,7 @@
 
   <groupId>com.epam.digital.data.platform</groupId>
   <artifactId>process-history-service-api</artifactId>
-  <version>1.6.0</version>
+  <version>1.9.0</version>
 
   <name>process-history-service-api</name>
   <description>process-history-service-api</description>
@@ -21,7 +21,7 @@
   <properties>
     <model.version>1.6.0.1</model.version>
     <model.core.version>1.6.0.60</model.core.version>
-    <ddm.starter.database.version>1.6.0.1</ddm.starter.database.version>
+    <ddm.starter.database.version>1.8.0.8</ddm.starter.database.version>
     <ddm.starter.logger2.version>1.6.0.5</ddm.starter.logger2.version>
     <ddm.starter.actuator.version>1.6.0.3</ddm.starter.actuator.version>
     <ddm.starter.security.version>1.6.0.13</ddm.starter.security.version>
