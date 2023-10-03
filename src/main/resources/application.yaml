@@ -72,13 +72,15 @@ platform:
       - /v3/api-docs/**
       - /swagger-ui/**
       - /actuator/**
+      - /v3/api-docs.yaml
 
 logbook:
   exclude:
     - /openapi
     - /v3/api-docs/**
+    - /v3/api-docs.yaml
     - /swagger-ui/**
     - /actuator/**
 
 locale:
-  resource-basename: lang/messages_uk
+  resource-basename: lang/messages

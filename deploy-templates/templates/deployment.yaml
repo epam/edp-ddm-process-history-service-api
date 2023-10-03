@@ -5,8 +5,12 @@ metadata:
   labels:
     app: {{ .Values.name }}
     version: {{ .Values.version }}
+  annotations:
+    configmap.reloader.stakater.com/reload: "{{ .Values.name }}-properties"
 spec:
-  replicas: 1
+  {{- if not .Values.global.registry.processHistoryServiceApi.hpa.enabled }}
+  replicas: {{ .Values.global.registry.processHistoryServiceApi.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app: {{ .Values.name }}
@@ -15,9 +19,18 @@ spec:
     type: RollingUpdate
   template:
     metadata:
+      {{- if or .Values.podAnnotations .Values.global.registry.processHistoryServiceApi.istio.sidecar.enabled }}
       annotations:
+        {{- if .Values.global.registry.processHistoryServiceApi.istio.sidecar.enabled }}
         sidecar.istio.io/inject: "true"
         traffic.sidecar.istio.io/excludeOutboundPorts: '5432'
+        {{- if .Values.global.istio.sidecar.requestsLimitsEnabled }}
+        {{- include "processHistoryServiceApi.istioResources" . | nindent 8 }}
+        {{- else }}
+        inject.istio.io/templates: 'sidecar,emptyRequestsLimits'
+        {{- end }}
+        {{- end }}
+      {{- end }}
       labels:
         app: {{ .Values.name }}
         version: {{ .Values.version }}
@@ -35,6 +48,9 @@ spec:
             httpGet:
               path: {{ .Values.probes.liveness.path }}
               port: {{ .Values.port }}
+              httpHeaders:
+                - name: X-B3-Sampled
+                  value: "0"
             failureThreshold: 1
             initialDelaySeconds: 180
             periodSeconds: 20
@@ -44,23 +60,23 @@ spec:
             httpGet:
               path: {{ .Values.probes.readiness.path }}
               port: {{ .Values.port }}
+              httpHeaders:
+                - name: X-B3-Sampled
+                  value: "0"
             failureThreshold: 5
             initialDelaySeconds: 60
             periodSeconds: 20
             successThreshold: 1
             timeoutSeconds: 5
-          {{- if not .Values.global.disableRequestsLimits }}
+          {{- if .Values.global.container.requestsLimitsEnabled }}
           resources:
-            limits:
-              cpu: 400m
-              memory: 800Mi
-            requests:
-              cpu: 400m
-              memory: 800Mi
+            {{- toYaml .Values.global.registry.processHistoryServiceApi.container.resources | nindent 12 }}
           {{- end }}
           env:
-            - name: JAVA_OPTS
-              value: {{ .Values.java.javaOpts }}
+            {{- range $name, $value := .Values.global.registry.processHistoryServiceApi.container.envVars }}
+            - name: {{ $name }}
+              value: {{ $value | quote }}
+            {{- end }}
             - name: DB_URL
               value: {{ .Values.db.url }}
             - name: DB_NAME

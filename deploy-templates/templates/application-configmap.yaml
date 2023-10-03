@@ -15,6 +15,7 @@ data:
       datasource:
         url: jdbc:postgresql://{{.Values.db.url}}:{{.Values.db.port}}/{{.Values.db.name}}?ApplicationName={{ .Chart.Name }}
         connection-timeout: {{.Values.db.connectionTimeout}}
+        maximum-pool-size: {{ .Values.processHistoryServiceApi.datasource.maxPoolSize }}
     
     audit:
       kafka:
@@ -26,3 +27,8 @@ data:
           keystore-certificate: {{ .Values.kafka.sslUserCertificate }}
           keystore-key: {{ .Values.kafka.sslUserKey }}
           truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
+    
+    {{- if .Values.global.language }}
+    locale:
+      language: {{ .Values.global.language }}
+    {{- end }}

@@ -11,6 +11,11 @@ data-platform:
     username: ${spring.datasource.username}
     password: ${spring.datasource.password}
 
+management:
+  endpoint:
+    prometheus:
+      enabled: false
+
 audit:
   kafka:
     bootstrap: localhost:9092
@@ -18,3 +23,6 @@ audit:
     schema-registry-url: http://localhost:8081
     ssl:
       enabled: false
+
+locale:
+  language: uk

@@ -25,8 +25,7 @@
     <ddm.starter.logger2.version>1.6.0.5</ddm.starter.logger2.version>
     <ddm.starter.actuator.version>1.6.0.3</ddm.starter.actuator.version>
     <ddm.starter.security.version>1.6.0.16</ddm.starter.security.version>
-    <ddm.starter.localization.version>1.6.0.3</ddm.starter.localization.version>
-    <ddm.starter.swagger.version>1.6.0.1</ddm.starter.swagger.version>
+    <ddm.starter.localization.version>1.6.0.11</ddm.starter.localization.version>
     <ddm.starter.audit.version>1.6.0.1</ddm.starter.audit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -42,6 +41,7 @@
     <postgresql.version>42.3.3</postgresql.version>
     <embedded.database.spring-test.version>2.1.1</embedded.database.spring-test.version>
     <snakeyaml.version>1.33</snakeyaml.version>
+    <springdoc.openapi.ui.version>1.6.9</springdoc.openapi.ui.version>
 
     <sonar.coverage.exclusions>
       **/config/**/*,
@@ -119,11 +119,6 @@
       <groupId>com.epam.digital.data.platform</groupId>
       <artifactId>ddm-starter-actuator</artifactId>
       <version>${ddm.starter.actuator.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.epam.digital.data.platform</groupId>
-      <artifactId>ddm-starter-swagger</artifactId>
-      <version>${ddm.starter.swagger.version}</version>
     </dependency>
     <dependency>
       <groupId>com.epam.digital.data.platform</groupId>
@@ -212,6 +207,11 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-ui</artifactId>
+      <version>${springdoc.openapi.ui.version}</version>
     </dependency>
 
     <dependency>
@@ -332,6 +332,47 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring-boot-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>pre-integration-test</id>
+            <goals>
+              <goal>start</goal>
+            </goals>
+            <configuration>
+              <useTestClasspath>true</useTestClasspath>
+              <directories>${project.build.testOutputDirectory}</directories>
+              <mainClass>com.epam.digital.data.platform.bphistory.service.api.TestApp</mainClass>
+              <jvmArguments>
+                -Dspring.profiles.active=test
+              </jvmArguments>
+              <wait>1000</wait>
+            </configuration>
+          </execution>
+          <execution>
+            <id>post-integration-test</id>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-maven-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <apiDocsUrl>http://localhost:8080/v3/api-docs.yaml</apiDocsUrl>
+              <outputFileName>swagger.yml</outputFileName>
+              <outputDir>openapi</outputDir>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.cyclonedx</groupId>

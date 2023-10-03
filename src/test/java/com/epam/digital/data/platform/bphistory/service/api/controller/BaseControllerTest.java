@@ -16,6 +16,7 @@
 
 package com.epam.digital.data.platform.bphistory.service.api.controller;
 
+import com.epam.digital.data.platform.bphistory.service.api.UserProcessHistoryServiceApiApplication;
 import com.epam.digital.data.platform.bphistory.service.api.config.TestBeansConfig;
 import com.epam.digital.data.platform.bphistory.service.api.service.impl.HistoryProcessService;
 import com.epam.digital.data.platform.bphistory.service.api.service.impl.ProcessService;
@@ -33,7 +34,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest
 @TestPropertySource(properties = {"platform.security.enabled=false"})
 @Import({TestBeansConfig.class, PermitAllWebSecurityConfig.class})
-@ContextConfiguration
+@ContextConfiguration(classes = UserProcessHistoryServiceApiApplication.class)
 public abstract class BaseControllerTest {
 
   public static final UUID USER_ID = UUID.fromString("123e4567-e89b-12d3-a456-426655440000");
